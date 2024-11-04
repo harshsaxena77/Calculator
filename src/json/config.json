@@ -1,0 +1,2619 @@
+{
+    "default_language": "en",
+    "parse": {
+        "comment": [
+            "(?P<COMMENT>#[^\r\n]{0,})[\r\n]{0,}"
+        ],
+        "percent": [
+            "(?P<NUMBER>[-+]?[0-9]+([,\\.][0-9]+){0,})(?P<PERCENT>%)",
+            "(?P<PERCENT>%)(?P<NUMBER>[-+]?[0-9]+([,\\.][0-9]+){0,})"
+        ],
+        "time": [
+            "\\b(?P<hour>0|1[0-2]|0?[1-9]):(?P<minute>[0-5][0-9]):(?P<second>[0-5][0-9])\\b",
+            "\\b(?P<hour>0|1[0-2]|0?[1-9]):(?P<minute>[0-5][0-9]) ?(?P<meridiem>[AaPp][Mm])\\b",
+            "\\b(?P<hour>0|1[0-2]|0?[1-9]) ?(?P<meridiem>[AaPp][Mm])\\b",
+            "\\b(?P<hour>[0-1]?[0-9]|2[0-3]):(?P<minute>[0-5][0-9]):(?P<second>[0-5][0-9])\\b",
+            "\\b(?P<hour>[0-1]?[0-9]|2[0-3]):(?P<minute>[0-5][0-9])\\b"
+        ],
+        "money": [
+            "(?P<CURRENCY>\\p{Currency_Symbol})(?P<PRICE>[-+]?[0-9]+[0-9.,]{0,})(?P<NOTATION>[kKMGTPZY]{0,1})",
+            "(?P<PRICE>[-+]?[0-9]+[0-9.,]{0,})[ ]*(?P<CURRENCY>[a-zA-Z]{2,})",
+            "(?P<PRICE>[-+]?[0-9]+[0-9.,]{0,})[ ]*(?P<CURRENCY>\\p{Currency_Symbol})",
+            "(?P<PRICE>[-+]?[0-9]+[0-9.,]{0,})(?P<NOTATION>[kKMGTPZY])[ ]{1,}(?P<CURRENCY>[a-zA-Z]{2,})",
+            "(?P<PRICE>[-+]?[0-9]+[0-9.,]{0,})(?P<NOTATION>[kKMGTPZY])[ ]{1,}(?P<CURRENCY>\\p{Currency_Symbol})"
+        ],
+        "number": [
+            "(?P<HEX_FULL>0[xX](?P<HEX>[0-9a-fA-F]+))",
+            "(?P<OCTAL_FULL>0[oO](?P<OCTAL>[0-7]+))",
+            "(?P<BINARY_FULL>0[bB](?P<BINARY>[01]+))",
+            "(?P<DECIMAL>[-+]?[0-9]+[0-9.,]{0,})(?P<NOTATION>[a-zA-Z]+)?"
+        ],
+        "text": [
+            "(?P<TEXT>[\\p{L}]+)"
+        ],
+        "timezone": [
+            "\\b(?P<timezone>(?P<timezone_2>GMT(?P<timezone_type>[+-]?)(?P<timezone_hour>[0-1]?[0-9]):?(?P<timezone_minute>[0-5][0-9])?)?(?P<timezone_1>[A-Z]{2,4})?)\\b"
+        ],
+        "field": [
+            "(\\{(?P<FIELD>[A-Z_]+):(?P<NAME>[^}]+):(?P<EXTRA>[^}]+)\\})",
+            "(\\{(?P<FIELD>[A-Z_]+):(?P<NAME>[^}]+)\\})"
+        ],
+        "atom": [
+            "(\\[(?P<ATOM>[A-Z_]+):(?P<DATA>[^\\]]+)\\])"
+        ],
+        "whitespace": [
+            "(?P<WHITESPACE>[ ]+)"
+        ],
+        "operator": [
+            "(?P<OPERATOR>[^0-9\\p{L} ])"
+        ]
+    },
+    "type_group": {
+        "NUMBER_GROUP": [
+            "PERCENT",
+            "NUMBER"
+        ],
+        "NUMBER_OR_MONEY": [
+            "NUMBER",
+            "MONEY"
+        ],
+        "TEXT_OR_MONTH": [
+            "TEXT",
+            "MONTH"
+        ],
+        "DATE_OR_TIME": [
+            "DATE",
+            "TIME"
+        ],
+        "DATETIME_DATE_TIME": [
+            "DATE",
+            "TIME",
+            "DATE_TIME"
+        ],
+        "NUMBER_OR_TIME": [
+            "NUMBER",
+            "TIME"
+        ]
+    },
+    "type_conversion":[{
+            "source": {
+                "name": "imperial-unit-length",
+                "index": 1
+            },
+            "target": {
+                "name": "metric-length",
+                "index": 1
+            },
+            "to_source_calculation" : "{value} * 25.4",
+            "to_target_calculation" : "{value} / 25.4"
+        }, {
+            "source": {
+                "name": "imperial-unit-weight",
+                "index": 1
+            },
+            "target": {
+                "name": "metric-weight",
+                "index": 1
+            },
+            "to_source_calculation" : "{value} * 28349.5231",
+            "to_target_calculation" : "{value} / 28349.5231"
+        }
+    ],
+    "types": [{
+        "name": "metric-length",
+        "items": [{
+            "index": 1,
+            "format": "{value} Millimeter",
+            "parse": ["{NUMBER:value} {TEXT:type:mm}", "{NUMBER:value} {TEXT:type:millimeter}"],
+            "downgrade_code": "{value}",
+            "upgrade_code": "{value} / 10",
+            "names": ["mm", "millimeter"]
+        }, {
+            "index": 2,
+            "format": "{value} Centimeter",
+            "parse": ["{NUMBER:value} {TEXT:type:cm}", "{NUMBER:value} {TEXT:type:centimeter}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["cm", "centimeter"]
+        }, {
+            "index": 3,
+            "format": "{value} Decimeter",
+            "parse": ["{NUMBER:value} {TEXT:type:dm}", "{NUMBER:value} {TEXT:type:decimeter}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["dm", "decimeter"]
+        }, {
+            "index": 4,
+            "format": "{value} Meter",
+            "parse": ["{NUMBER:value} {TEXT:type:m}", "{NUMBER:value} {TEXT:type:meter}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["m", "meter"]
+        }, {
+            "index": 5,
+            "format": "{value} Decameter",
+            "parse": ["{NUMBER:value} {TEXT:type:dam}", "{NUMBER:value} {TEXT:type:decameter}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["dam", "decameter"]
+        }, {
+            "index": 6,
+            "format": "{value} Hectometer",
+            "parse": ["{NUMBER:value} {TEXT:type:hm}", "{NUMBER:value} {TEXT:type:hectometer}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["hm", "hectometer"]
+        }, {
+            "index": 7,
+            "format": "{value} Kilometer",
+            "parse": ["{NUMBER:value} {TEXT:type:km}", "{NUMBER:value} {TEXT:type:kilometer}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["km", "kilometer"]
+        }]
+    }, {
+        "name": "metric-weight",
+        "items": [{
+            "index": 1,
+            "format": "{value} Milligram",
+            "parse": ["{NUMBER:value} {TEXT:type:mg}", "{NUMBER:value} {TEXT:type:milligram}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["mg", "milligram"]
+        }, {
+            "index": 2,
+            "format": "{value} Centigram",
+            "parse": ["{NUMBER:value} {TEXT:type:cg}", "{NUMBER:value} {TEXT:type:centigram}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["cg", "centigram"]
+        }, {
+            "index": 3,
+            "format": "{value} Decigram",
+            "parse": ["{NUMBER:value} {TEXT:type:dg}", "{NUMBER:value} {TEXT:type:decigram}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["dg", "decigram"]
+        }, {
+            "index": 4,
+            "format": "{value} Gram",
+            "parse": ["{NUMBER:value} {TEXT:type:g}", "{NUMBER:value} {TEXT:type:gram}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["g", "gram"]
+        }, {
+            "index": 5,
+            "format": "{value} Decagram",
+            "parse": ["{NUMBER:value} {TEXT:type:dag}", "{NUMBER:value} {TEXT:type:decagram}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["dag", "decagram"]
+        }, {
+            "index": 6,
+            "format": "{value} Hectogram",
+            "parse": ["{NUMBER:value} {TEXT:type:hg}", "{NUMBER:value} {TEXT:type:hectogram}"],
+            "downgrade_code": "{value} * 10",
+            "upgrade_code": "{value} / 10",
+            "names": ["hg", "hectogram"]
+        }, {
+            "index": 7,
+            "format": "{value} Kilogram",
+            "parse": ["{NUMBER:value} {TEXT:type:kg}", "{NUMBER:value} {TEXT:type:kilogram}"],
+            "downgrade_code": "{value} * 1000",
+            "upgrade_code": "{value} / 1000",
+            "names": ["kg", "kilogram"]
+        }, {
+            "index": 8,
+            "format": "{value} Tonne",
+            "parse": ["{NUMBER:value} {TEXT:type:tonne}", "{NUMBER:value} {TEXT:type:megagram}"],
+            "downgrade_code": "{value} * 1000",
+            "upgrade_code": "{value} / 1000",
+            "names": ["tonne", "megagram"]
+        }]
+    }, {
+        "name": "memory",
+        "items": [{
+            "index": 1,
+            "format": "{value}bit",
+            "parse": ["{NUMBER:value} {TEXT:type:bit}"],
+            "downgrade_code": "{value}",
+            "upgrade_code": "{value} / 8",
+            "names": ["bit"]
+        }, {
+            "index": 2,
+            "format": "{value}byte",
+            "parse": ["{NUMBER:value} {TEXT:type:byte}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["byte"]
+        }, {
+            "index": 3,
+            "format": "{value}KB",
+            "parse": ["{NUMBER:value} {TEXT:type:kb}", "{NUMBER:value} {TEXT:type:kilobyte}", "{NUMBER:value} {TEXT:type:kilobytes}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["kb", "kilobyte"]
+        }, {
+            "index": 4,
+            "format": "{value}MB",
+            "parse": ["{NUMBER:value} {TEXT:type:mb}", "{NUMBER:value} megabyte", "{NUMBER:value} {TEXT:type:megabytes}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["mb", "mega", "megabyte"]
+        }, {
+            "index": 5,
+            "format": "{value}GB",
+            "parse": ["{NUMBER:value} {TEXT:type:gb}", "{NUMBER:value} {TEXT:type:gigabyte}", "{NUMBER:value} {TEXT:type:gigabytes}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["gb", "giga", "gigabyte"]
+        }, {
+            "index": 6,
+            "format": "{value}TB",
+            "parse": ["{NUMBER:value} {TEXT:type:tb}", "{NUMBER:value} {TEXT:type:terabyte}", "{NUMBER:value} {TEXT:type:terabytes}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["tb", "tera", "terabyte"]
+        }, {
+            "index": 7,
+            "format": "{value}PB",
+            "parse": ["{NUMBER:value} {TEXT:type:pb}", "{NUMBER:value} {TEXT:type:petabyte}", "{NUMBER:value} {TEXT:type:petabytes}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["pb", "peta", "petabyte"]
+        }, {
+            "index": 8,
+            "format": "{value}EB",
+            "parse": ["{NUMBER:value} {TEXT:type:eb}", "{NUMBER:value} {TEXT:type:exabyte}", "{NUMBER:value} {TEXT:type:exabytes}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["eb", "exa", "exabyte"]
+        }, {
+            "index": 9,
+            "format": "{value}ZB",
+            "parse": ["{NUMBER:value} {TEXT:type:zb}", "{NUMBER:value} {TEXT:type:zettabyte}", "{NUMBER:value} {TEXT:type:zettabytes}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["zb", "zetta", "zettabyte"]
+        }, {
+            "index": 10,
+            "format": "{value}YB",
+            "parse": ["{NUMBER:value} {TEXT:type:yb}", "{NUMBER:value} {TEXT:type:yottabyte}"],
+            "downgrade_code": "{value} * 1024",
+            "upgrade_code": "{value} / 1024",
+            "names": ["yb", "yotta", "yottabyte"]
+        }]
+    }, {
+        "name": "imperial-unit-length",
+        "items": [{
+            "index": 1,
+            "format": "{value} Inch",
+            "parse": ["{NUMBER:value} {TEXT:type:in}", "{NUMBER:value} {TEXT:type:inch}"],
+            "downgrade_code": "{value}",
+            "upgrade_code": "{value} / 12",
+            "names": ["in", "inch"]
+        }, {
+            "index": 2,
+            "format": "{value} Feet",
+            "parse": ["{NUMBER:value} {TEXT:type:ft}", "{NUMBER:value} {TEXT:type:feet}", "{NUMBER:value} {TEXT:type:foot}"],
+            "downgrade_code": "{value} * 12",
+            "upgrade_code": "{value} / 3",
+            "names": ["ft", "feet", "foot"]
+        }, {
+            "index": 3,
+            "format": "{value} Yard",
+            "parse": ["{NUMBER:value} {TEXT:type:yard}"],
+            "downgrade_code": "{value} * 3",
+            "upgrade_code": "{value} / 220",
+            "names": ["yard"]
+        }, {
+            "index": 4,
+            "format": "{value} Furlong",
+            "parse": ["{NUMBER:value} {TEXT:type:furlong}"],
+            "downgrade_code": "{value} * 220",
+            "upgrade_code": "{value} / 8",
+            "names": ["furlong"]
+        }, {
+            "index": 5,
+            "format": "{value} Mile",
+            "parse": ["{NUMBER:value} {TEXT:type:mile}"],
+            "downgrade_code": "{value} * 8",
+            "upgrade_code": "{value} / 12",
+            "names": ["mile"]
+        }]
+    }, {
+        "name": "imperial-unit-weight",
+        "items": [{
+            "index": 1,
+            "format": "{value} Ounce",
+            "parse": ["{NUMBER:value} {TEXT:type:oz}", "{NUMBER:value} {TEXT:type:ounce}"],
+            "downgrade_code": "{value}",
+            "upgrade_code": "{value} / 16",
+            "names": ["oz", "ounce"]
+        }, {
+            "index": 2,
+            "format": "{value} Pound",
+            "parse": ["{NUMBER:value} {TEXT:type:lb}", "{NUMBER:value} {TEXT:type:pound}"],
+            "downgrade_code": "{value} * 16",
+            "upgrade_code": "{value} / 14",
+            "names": ["lb", "pound"]
+        }, {
+            "index": 3,
+            "format": "{value} Stone",
+            "parse": ["{NUMBER:value} {TEXT:type:st}", "{NUMBER:value} {TEXT:type:stone}"],
+            "downgrade_code": "{value} * 14",
+            "upgrade_code": "{value} / 220",
+            "names": ["st", "stone"]
+        }]
+    }],
+    "alias": {
+        "−": "-",
+        "_": "",
+        ";": "",
+        "!": "",
+        "\\?": "",
+        "'": "",
+        "&": "",
+        "\\^": ""
+    },
+    "languages": {
+        "tr": {
+            "number_notation": {
+                "k": 1,
+                "K": 1,
+                "M": 2,
+                "G": 3,
+                "T": 4,
+                "P": 5,
+                "Z": 6,
+                "Y": 7
+            },
+            "format": {
+                "date": {
+                    "full_date_time": "{day} {month_short} {year} {hour_pad}:{minute_pad}:{second_pad}",
+                    "full_date": "{day} {month_short} {year}",
+                    "current_year_with_time": "{day} {month_long} {hour_pad}:{minute_pad}:{second_pad}",
+                    "current_year": "{day} {month_long}"
+                },
+                "duration": [
+                    {
+                        "count": "n",
+                        "format": "{second} saniye",
+                        "duration_type": "Second"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{minute} dakika",
+                        "duration_type": "Minute"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{hour} saat",
+                        "duration_type": "Hour"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{day} gün",
+                        "duration_type": "Day"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{week} hafta",
+                        "duration_type": "Week"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{month} ay",
+                        "duration_type": "Month"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{year} yıl",
+                        "duration_type": "Year"
+                    }
+                ]
+            },
+            "alias": {
+                "kere": "[OPERATOR:*]",
+                "çarpı": "[OPERATOR:*]",
+                "carpi": "[OPERATOR:*]",
+                "çarp": "[OPERATOR:*]",
+                "carp": "[OPERATOR:*]",
+                "ekle": "[OPERATOR:+]",
+                "topla": "[OPERATOR:+]",
+                "toplam": "[OPERATOR:+]",
+                "eksi": "[OPERATOR:-]",
+                "çıkar": "[OPERATOR:-]",
+                "cikar": "[OPERATOR:-]",
+                "çıkart": "[OPERATOR:-]",
+                "cikart": "[OPERATOR:-]",
+                "euro": "eur"
+            },
+            "long_months": {
+                "ocak": 1,
+                "şubat": 2,
+                "subat": 2,
+                "mart": 3,
+                "nisan": 4,
+                "mayıs": 5,
+                "mayis": 5,
+                "haziran": 6,
+                "temmuz": 7,
+                "ağustos": 8,
+                "agustos": 8,
+                "eylül": 9,
+                "eylul": 9,
+                "ekim": 10,
+                "kasım": 11,
+                "kasim": 11,
+                "aralık": 12,
+                "aralik": 12
+            },
+            "short_months": {
+                "oca": 1,
+                "şub": 2,
+                "sub": 2,
+                "mar": 3,
+                "nis": 4,
+                "may": 5,
+                "haz": 6,
+                "tem": 7,
+                "ağu": 8,
+                "agu": 8,
+                "eyl": 9,
+                "eki": 10,
+                "kas": 11,
+                "ara": 12
+            },
+            "word_group": {
+                "hour_group": [
+                    "saat"
+                ],
+                "week_group": [
+                    "hafta"
+                ],
+                "conversion_group": [],
+                "number_type_group": [],
+                "duration_group": [
+                    "gün",
+                    "gun",
+                    "hafta",
+                    "ay",
+                    "yıl",
+                    "yil",
+                    "saniye",
+                    "dakika",
+                    "saat"
+                ]
+            },
+            "constant_pair": {
+                "gün": 1,
+                "gun": 1,
+                "hafta": 2,
+                "ay": 3,
+                "yıl": 4,
+                "yil": 4,
+                "saniye": 5,
+                "dakika": 6,
+                "saat": 7,
+                "bugün": 8,
+                "bugun": 8,
+                "yarın": 9,
+                "yarin": 9,
+                "dün": 10,
+                "dun": 10,
+                "şimdi": 11,
+                "simdi": 11
+            },
+            "rules": {
+                "percent_calculator": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:percent} {NUMBER:number}",
+                        "{NUMBER:number} {PERCENT:percent}"
+                    ]
+                },
+                "convert_money": {
+                    "samples": [],
+                    "rules": [
+                        "{MONEY:money} {GROUP:conversion:conversion_group} {TEXT:currency}",
+                        "{MONEY:money} {TEXT:currency}"
+                    ]
+                },
+                "number_on": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:p} on {NUMBER_OR_MONEY:number}",
+                        "{NUMBER_OR_MONEY:number} on {PERCENT:p}"
+                    ]
+                },
+                "number_of": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:p} of {NUMBER_OR_MONEY:number}",
+                        "{NUMBER_OR_MONEY:number} of {PERCENT:p}"
+                    ]
+                },
+                "number_off": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:p} off {NUMBER_OR_MONEY:number}",
+                        "{NUMBER_OR_MONEY:number} off {PERCENT:p}"
+                    ]
+                },
+                "division_cleanup": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:data}/{TEXT:text}",
+                        "{MONEY:data}/{TEXT:text}",
+                        "{NUMBER:data}/{TEXT:text}"
+                    ]
+                },
+                "find_numbers_percent": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER_OR_MONEY:part} is what % of {NUMBER_OR_MONEY:total}"
+                    ]
+                },
+                "find_total_from_percent": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER_OR_MONEY:number_part} is {PERCENT:percent_part} of what"
+                    ]
+                },
+                "duration_parse": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER:duration} {GROUP:type:duration_group}"
+                    ]
+                },
+                "combine_durations": {
+                    "samples": [],
+                    "rules": [
+                        "{DURATION:1} {DURATION:2}",
+                        "{DURATION:1} {DURATION:2} {DURATION:3}",
+                        "{DURATION:1} {DURATION:2} {DURATION:3} {DURATION:4}",
+                        "{DURATION:1} {DURATION:2} {DURATION:3} {DURATION:4} {DURATION:5}",
+                        "{DURATION:1} {DURATION:2} {DURATION:3} {DURATION:4} {DURATION:5} {DURATION:6}"
+                    ]
+                },
+                "as_duration": {
+                    "samples": [],
+                    "rules": [
+                        "{DURATION:source} {GROUP:conversion:conversion_group} {GROUP:type:duration_group}",
+                        "{TIME:source} {GROUP:conversion:conversion_group} {GROUP:type:duration_group}"
+                    ]
+                },
+                "to_duration": {
+                    "samples": [],
+                    "rules": [
+                        "{TIME:source} {TIME:target} arası",
+                        "{DATE:source} {DATE:target} arası"
+                    ]
+                }
+            }
+        },
+        "en": {
+            "number_notation": {
+                "k": 1,
+                "K": 1,
+                "M": 2,
+                "G": 3,
+                "T": 4,
+                "P": 5,
+                "Z": 6,
+                "Y": 7
+            },
+            "format": {
+                "date": {
+                    "full_date_time": "{day} {month_short} {year} {hour_pad}:{minute_pad}:{second_pad} {timezone}",
+                    "full_date": "{day} {month_short} {year}",
+                    "current_year_with_time": "{day} {month_long} {hour_pad}:{minute_pad}:{second_pad} {timezone}",
+                    "current_year": "{day} {month_long}"
+                },
+                "duration": [
+                    {
+                        "count": "n",
+                        "format": "{second} seconds",
+                        "duration_type": "Second"
+                    },
+                    {
+                        "count": "1",
+                        "format": "1 second",
+                        "duration_type": "Second"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{minute} minutes",
+                        "duration_type": "Minute"
+                    },
+                    {
+                        "count": "1",
+                        "format": "1 minute",
+                        "duration_type": "Minute"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{hour} hours",
+                        "duration_type": "Hour"
+                    },
+                    {
+                        "count": "1",
+                        "format": "1 hour",
+                        "duration_type": "Hour"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{day} days",
+                        "duration_type": "Day"
+                    },
+                    {
+                        "count": "1",
+                        "format": "1 day",
+                        "duration_type": "Day"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{week} weeks",
+                        "duration_type": "Week"
+                    },
+                    {
+                        "count": "1",
+                        "format": "1 week",
+                        "duration_type": "Week"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{month} months",
+                        "duration_type": "Month"
+                    },
+                    {
+                        "count": "1",
+                        "format": "1 month",
+                        "duration_type": "Month"
+                    },
+                    {
+                        "count": "n",
+                        "format": "{year} years",
+                        "duration_type": "Year"
+                    },
+                    {
+                        "count": "1",
+                        "format": "1 year",
+                        "duration_type": "Year"
+                    }
+                ]
+            },
+            "alias": {
+                "times": "[OPERATOR:*]",
+                "multiply": "[OPERATOR:*]",
+                "divide": "[OPERATOR:/]",
+                "add": "[OPERATOR:+]",
+                "sum": "[OPERATOR:+]",
+                "append": "[OPERATOR:+]",
+                "exclude": "[OPERATOR:-]",
+                "minus": "[OPERATOR:-]",
+                "euro": "eur"
+            },
+            "long_months": {
+                "january": 1,
+                "february": 2,
+                "march": 3,
+                "april": 4,
+                "may": 5,
+                "june": 6,
+                "july": 7,
+                "august": 8,
+                "september": 9,
+                "october": 10,
+                "november": 11,
+                "december": 12
+            },
+            "short_months": {
+                "jan": 1,
+                "feb": 2,
+                "mar": 3,
+                "apr": 4,
+                "may": 5,
+                "jun": 6,
+                "jul": 7,
+                "aug": 8,
+                "sep": 9,
+                "oct": 10,
+                "nov": 11,
+                "dec": 12
+            },
+            "word_group": {
+                "hour_group": [
+                    "hour",
+                    "hours"
+                ],
+                "week_group": [
+                    "week",
+                    "weeks"
+                ],
+                "conversion_group": [
+                    "in",
+                    "into",
+                    "as",
+                    "to"
+                ],
+                "number_type_group": [
+                    "hex",
+                    "hexadecimal",
+                    "decimal",
+                    "octal",
+                    "binary"
+                ],
+                "duration_group": [
+                    "day",
+                    "days",
+                    "week",
+                    "weeks",
+                    "second",
+                    "seconds",
+                    "hour",
+                    "hours",
+                    "minute",
+                    "minutes",
+                    "month",
+                    "months",
+                    "year",
+                    "years"
+                ]
+            },
+            "constant_pair": {
+                "day": 1,
+                "days": 1,
+                "week": 2,
+                "weeks": 2,
+                "month": 3,
+                "months": 3,
+                "year": 4,
+                "years": 4,
+                "second": 5,
+                "seconds": 5,
+                "minute": 6,
+                "minutes": 6,
+                "hour": 7,
+                "hours": 7,
+                "today": 8,
+                "tomorrow": 9,
+                "yesterday": 10,
+                "now": 11
+            },
+            "rules": {
+                "percent_calculator": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:percent} {NUMBER:number}",
+                        "{NUMBER:number} {PERCENT:percent}"
+                    ]
+                },
+                "time_with_timezone": {
+                    "samples": [],
+                    "rules": [ "{TIME:time} {TIMEZONE:timezone}" ]
+                },
+                "to_unixtime": {
+                    "samples": [],
+                    "rules": [
+                        "{DATETIME_DATE_TIME:data} {GROUP:conversion:conversion_group} {TEXT:type:unix}",
+                        "{DATETIME_DATE_TIME:data} {GROUP:conversion:conversion_group} {TEXT:type:unixtime}",
+                        "{DATETIME_DATE_TIME:data} {GROUP:conversion:conversion_group} {TEXT:type:unixtimestamp}",
+                        "{DATETIME_DATE_TIME:data} {TEXT:type:unix}",
+                        "{DATETIME_DATE_TIME:data} {TEXT:type:unixtime}",
+                        "{DATETIME_DATE_TIME:data} {TEXT:type:unixtimestamp}"
+                    ]
+                },
+                "from_unixtime": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER:number} {GROUP:conversion:conversion_group} date",
+                        "{NUMBER:number} {GROUP:conversion:conversion_group} {TIMEZONE:timezone}",
+                        "{NUMBER:number} {TIMEZONE:timezone}",
+                        "{NUMBER:number} date"
+                    ]
+                },
+                "convert_timezone": {
+                    "samples": [],
+                    "rules": ["{DATETIME_DATE_TIME:time} {GROUP:conversion:conversion_group} {TIMEZONE:timezone}"]
+                },
+                "convert_money": {
+                    "samples": [],
+                    "rules": [
+                        "{MONEY:money} {GROUP:conversion:conversion_group} {TEXT:currency}",
+                        "{MONEY:money} {TEXT:currency}"
+                    ]
+                },
+                "number_type_convert": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER:number} {GROUP:conversion:conversion_group} {GROUP:type:number_type_group}",
+                        "{NUMBER:number} {GROUP:type:number_type_group}"
+                    ]
+                },
+                "number_on": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:p} on {NUMBER_OR_MONEY:number}",
+                        "{NUMBER_OR_MONEY:number} on {PERCENT:p}"
+                    ]
+                },
+                "number_of": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:p} of {NUMBER_OR_MONEY:number}",
+                        "{NUMBER_OR_MONEY:number} of {PERCENT:p}"
+                    ]
+                },
+                "number_off": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:p} off {NUMBER_OR_MONEY:number}",
+                        "{NUMBER_OR_MONEY:number} off {PERCENT:p}"
+                    ]
+                },
+                "division_cleanup": {
+                    "samples": [],
+                    "rules": [
+                        "{PERCENT:data}/{TEXT:text}",
+                        "{MONEY:data}/{TEXT:text}",
+                        "{NUMBER:data}/{TEXT:text}"
+                    ]
+                },
+                "find_numbers_percent": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER_OR_MONEY:part} is what % of {NUMBER_OR_MONEY:total}"
+                    ]
+                },
+                "find_total_from_percent": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER_OR_MONEY:number_part} is {PERCENT:percent_part} of what"
+                    ]
+                },
+                "duration_parse": {
+                    "samples": [],
+                    "rules": [
+                        "{NUMBER:duration} {GROUP:type:duration_group}"
+                    ]
+                },
+                "combine_durations": {
+                    "samples": [],
+                    "rules": [
+                        "{DURATION:1} {DURATION:2} {DURATION:3} {DURATION:4} {DURATION:5} {DURATION:6}",
+                        "{DURATION:1} {DURATION:2} {DURATION:3} {DURATION:4} {DURATION:5}",
+                        "{DURATION:1} {DURATION:2} {DURATION:3} {DURATION:4}",
+                        "{DURATION:1} {DURATION:2} {DURATION:3}",
+                        "{DURATION:1} {DURATION:2}"
+                    ]
+                },
+                "as_duration": {
+                    "samples": [],
+                    "rules": [
+                        "{DURATION:source} {GROUP:conversion:conversion_group} {GROUP:type:duration_group}",
+                        "{TIME:source} {GROUP:conversion:conversion_group} {GROUP:type:duration_group}"
+                    ]
+                },
+                "to_duration": {
+                    "samples": [],
+                    "rules": [
+                        "{TIME:source} to {TIME:target}",
+                        "{DATE:source} to {DATE:target}"
+                    ]
+                },
+                "at_date": {
+                    "samples": [],
+                    "rules": [
+                        "{DATE:source} at {NUMBER_OR_TIME:time}"
+                    ]
+                },
+                "dynamic_type_convert": {
+                    "samples": [],
+                    "rules": [
+                        "{DYNAMIC_TYPE:source} {GROUP:group:conversion_group} {TEXT:type}"
+                    ]
+                }
+            }
+        }
+    },
+    "currency_alias": {
+        "try": "try",
+        "tl": "try",
+        "₺": "try",
+        "$": "usd",
+        "usd": "usd",
+        "dollar": "usd",
+        "sek": "sek",
+        "dkk": "dkk",
+        "kr": "dkk",
+        "kroner": "dkk",
+        "bgn": "bgn",
+        "leva": "bgn",
+        "lef": "bgn",
+        "лв": "bgn",
+        "eur": "eur",
+        "euro": "eur",
+        "avro": "eur",
+        "€": "eur"
+    },
+    "timezones": {
+        "ACDT": 630,
+        "ACST": 570,
+        "ADT": -180,
+        "AEDT": 660,
+        "AEST": 600,
+        "AFT": 270,
+        "AKDT": -480,
+        "AKST": -540,
+        "ALMT": 360,
+        "AMST": -180,
+        "AMT": -240,
+        "ANAST": 720,
+        "ANAT": 720,
+        "AQTT": 300,
+        "ART": -180,
+        "AST": -240,
+        "AWDT": 540,
+        "AWST": 480,
+        "AZOST": 0,
+        "AZOT": -60,
+        "AZST": 300,
+        "AZT": 240,
+        "BNT": 480,
+        "BOT": -240,
+        "BRST": -120,
+        "BRT": -180,
+        "BST": 60,
+        "BTT": 360,
+        "CAST": 480,
+        "CAT": 120,
+        "CCT": 390,
+        "CDT": -300,
+        "CEST": 120,
+        "CET": 60,
+        "CHADT": 825,
+        "CHAST": 765,
+        "CKT": -600,
+        "CLST": -180,
+        "CLT": -240,
+        "COT": -300,
+        "CST": -300,
+        "CVT": -60,
+        "CXT": 420,
+        "ChST": 600,
+        "DAVT": 420,
+        "EASST": -300,
+        "EAST": -360,
+        "EAT": 180,
+        "ECT": -300,
+        "EDT": -240,
+        "EEST": 180,
+        "EET": 120,
+        "EGST": 0,
+        "EGT": -60,
+        "EST": -300,
+        "ET": -300,
+        "FJST": 780,
+        "FJT": 720,
+        "FKST": -180,
+        "FKT": -240,
+        "FNT": -120,
+        "GALT": -360,
+        "GAMT": -540,
+        "GET": 240,
+        "GFT": -180,
+        "GILT": 720,
+        "GMT": 0,
+        "GST": 240,
+        "GYT": -240,
+        "HAA": -180,
+        "HAC": -300,
+        "HADT": -540,
+        "HAE": -240,
+        "HAP": -420,
+        "HAR": -360,
+        "HAST": -600,
+        "HAT": -150,
+        "HAY": -480,
+        "HKT": 480,
+        "HLV": -270,
+        "HNA": -240,
+        "HNC": -360,
+        "HNE": -300,
+        "HNP": -480,
+        "HNR": -420,
+        "HNT": -210,
+        "HNY": -540,
+        "HOVT": 420,
+        "ICT": 420,
+        "IDT": 180,
+        "IOT": 360,
+        "IRDT": 270,
+        "IRKST": 540,
+        "IRKT": 540,
+        "IRST": 210,
+        "IST": 60,
+        "JST": 540,
+        "KGT": 360,
+        "KRAST": 480,
+        "KRAT": 480,
+        "KST": 540,
+        "KUYT": 240,
+        "LHDT": 660,
+        "LHST": 630,
+        "LINT": 840,
+        "MAGST": 720,
+        "MAGT": 720,
+        "MART": -570,
+        "MAWT": 300,
+        "MDT": -360,
+        "MESZ": 120,
+        "MEZ": 60,
+        "MHT": 720,
+        "MMT": 390,
+        "MSD": 240,
+        "MSK": 240,
+        "MST": -420,
+        "MUT": 240,
+        "MVT": 300,
+        "MYT": 480,
+        "NCT": 660,
+        "NDT": -150,
+        "NFT": 690,
+        "NOVST": 420,
+        "NOVT": 360,
+        "NPT": 345,
+        "NST": -210,
+        "NUT": -660,
+        "NZDT": 780,
+        "NZST": 720,
+        "OMSST": 420,
+        "OMST": 420,
+        "PDT": -420,
+        "PET": -300,
+        "PETST": 720,
+        "PETT": 720,
+        "PGT": 600,
+        "PHOT": 780,
+        "PHT": 480,
+        "PKT": 300,
+        "PMDT": -120,
+        "PMST": -180,
+        "PONT": 660,
+        "PST": -480,
+        "PT": -480,
+        "PWT": 540,
+        "PYST": -180,
+        "PYT": -240,
+        "RET": 240,
+        "SAMT": 240,
+        "SAST": 120,
+        "SBT": 660,
+        "SCT": 240,
+        "SGT": 480,
+        "SRT": -180,
+        "SST": -660,
+        "TAHT": -600,
+        "TFT": 300,
+        "TJT": 300,
+        "TKT": 780,
+        "TLT": 540,
+        "TMT": 300,
+        "TVT": 720,
+        "ULAT": 480,
+        "UTC": 0,
+        "UYST": -120,
+        "UYT": -180,
+        "UZT": 300,
+        "VET": -270,
+        "VLAST": 660,
+        "VLAT": 660,
+        "VUT": 660,
+        "WAST": 120,
+        "WAT": 60,
+        "WEST": 60,
+        "WESZ": 60,
+        "WET": 0,
+        "WEZ": 0,
+        "WFT": 720,
+        "WGST": -120,
+        "WGT": -180,
+        "WIB": 420,
+        "WIT": 540,
+        "WITA": 480,
+        "WST": 780,
+        "WT": 0,
+        "YAKST": 600,
+        "YAKT": 600,
+        "YAPT": 600,
+        "YEKST": 360,
+        "YEKT": 360
+    },
+    "currency_rates": {
+        "hkd": 7.7526495869,
+        "isk": 129.2664608195,
+        "php": 48.1023116081,
+        "dkk": 6.2056246349,
+        "huf": 297.5715597096,
+        "czk": 21.5355086372,
+        "gbp": 0.7305182342,
+        "ron": 4.0680130184,
+        "sek": 8.4476341484,
+        "idr": 14036.752065426,
+        "inr": 72.9091212551,
+        "brl": 5.4450471501,
+        "rub": 74.7997162647,
+        "hrk": 6.3100225319,
+        "jpy": 105.749812234,
+        "thb": 30.1001418676,
+        "chf": 0.9033630977,
+        "eur": 0.8345155637,
+        "myr": 4.0705165651,
+        "bgn": 1.6321455395,
+        "try": 7.0727697572,
+        "cny": 6.4704164233,
+        "nok": 8.6011850121,
+        "nzd": 1.3999833097,
+        "zar": 14.9717933739,
+        "usd": 1.0,
+        "mxn": 20.3196194609,
+        "sgd": 1.3379788033,
+        "aud": 1.31527998,
+        "ils": 3.2926646082,
+        "krw": 1122.7989652007,
+        "pln": 3.7572394225
+    },
+    "currencies": {
+        "AED": {
+            "code": "AED",
+            "symbol": "د.إ.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "AFN": {
+            "code": "AFN",
+            "symbol": "؋",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "ALL": {
+            "code": "ALL",
+            "symbol": "Lek",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "AMD": {
+            "code": "AMD",
+            "symbol": "֏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "ANG": {
+            "code": "ANG",
+            "symbol": "ƒ",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "AOA": {
+            "code": "AOA",
+            "symbol": "Kz",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "ARS": {
+            "code": "ARS",
+            "symbol": "$",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "AUD": {
+            "code": "AUD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "AWG": {
+            "code": "AWG",
+            "symbol": "ƒ",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "AZN": {
+            "code": "AZN",
+            "symbol": "₼",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "BAM": {
+            "code": "BAM",
+            "symbol": "КМ",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "BBD": {
+            "code": "BBD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "BDT": {
+            "code": "BDT",
+            "symbol": "৳",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 0
+        },
+        "BGN": {
+            "code": "BGN",
+            "symbol": "лв.",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "BHD": {
+            "code": "BHD",
+            "symbol": "د.ب.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 3
+        },
+        "BIF": {
+            "code": "BIF",
+            "symbol": "FBu",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "BMD": {
+            "code": "BMD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "BND": {
+            "code": "BND",
+            "symbol": "$",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "BOB": {
+            "code": "BOB",
+            "symbol": "Bs",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "BRL": {
+            "code": "BRL",
+            "symbol": "R$",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "BSD": {
+            "code": "BSD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "BTN": {
+            "code": "BTN",
+            "symbol": "Nu.",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 1
+        },
+        "BWP": {
+            "code": "BWP",
+            "symbol": "P",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "BYR": {
+            "code": "BYR",
+            "symbol": "р.",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "BZD": {
+            "code": "BZD",
+            "symbol": "BZ$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "CAD": {
+            "code": "CAD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "CDF": {
+            "code": "CDF",
+            "symbol": "FC",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "CHF": {
+            "code": "CHF",
+            "symbol": "CHF",
+            "thousandsSeparator": "'",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "CLP": {
+            "code": "CLP",
+            "symbol": "$",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "CNY": {
+            "code": "CNY",
+            "symbol": "¥",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "COP": {
+            "code": "COP",
+            "symbol": "$",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "CRC": {
+            "code": "CRC",
+            "symbol": "₡",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "CUC": {
+            "code": "CUC",
+            "symbol": "CUC",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "CUP": {
+            "code": "CUP",
+            "symbol": "$MN",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "CVE": {
+            "code": "CVE",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "CZK": {
+            "code": "CZK",
+            "symbol": "Kč",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "DJF": {
+            "code": "DJF",
+            "symbol": "Fdj",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "DKK": {
+            "code": "DKK",
+            "symbol": "kr.",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "DOP": {
+            "code": "DOP",
+            "symbol": "RD$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "DZD": {
+            "code": "DZD",
+            "symbol": "د.ج.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "EGP": {
+            "code": "EGP",
+            "symbol": "ج.م.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "ERN": {
+            "code": "ERN",
+            "symbol": "Nfk",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "ETB": {
+            "code": "ETB",
+            "symbol": "ETB",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "EUR": {
+            "code": "EUR",
+            "symbol": "€",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "FJD": {
+            "code": "FJD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "FKP": {
+            "code": "FKP",
+            "symbol": "£",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "GBP": {
+            "code": "GBP",
+            "symbol": "£",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "GEL": {
+            "code": "GEL",
+            "symbol": "Lari",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "GHS": {
+            "code": "GHS",
+            "symbol": "₵",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "GIP": {
+            "code": "GIP",
+            "symbol": "£",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "GMD": {
+            "code": "GMD",
+            "symbol": "D",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "GNF": {
+            "code": "GNF",
+            "symbol": "FG",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "GTQ": {
+            "code": "GTQ",
+            "symbol": "Q",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "GYD": {
+            "code": "GYD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "HKD": {
+            "code": "HKD",
+            "symbol": "HK$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "HNL": {
+            "code": "HNL",
+            "symbol": "L.",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "HRK": {
+            "code": "HRK",
+            "symbol": "kn",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "HTG": {
+            "code": "HTG",
+            "symbol": "G",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "HUF": {
+            "code": "HUF",
+            "symbol": "Ft",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "IDR": {
+            "code": "IDR",
+            "symbol": "Rp",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "ILS": {
+            "code": "ILS",
+            "symbol": "₪",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "INR": {
+            "code": "INR",
+            "symbol": "₹",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "IQD": {
+            "code": "IQD",
+            "symbol": "د.ع.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "IRR": {
+            "code": "IRR",
+            "symbol": "﷼",
+            "thousandsSeparator": ",",
+            "decimalSeparator": "/",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "ISK": {
+            "code": "ISK",
+            "symbol": "kr.",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 0
+        },
+        "JMD": {
+            "code": "JMD",
+            "symbol": "J$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "JOD": {
+            "code": "JOD",
+            "symbol": "د.ا.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 3
+        },
+        "JPY": {
+            "code": "JPY",
+            "symbol": "¥",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "KES": {
+            "code": "KES",
+            "symbol": "KSh",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "KGS": {
+            "code": "KGS",
+            "symbol": "сом",
+            "thousandsSeparator": " ",
+            "decimalSeparator": "-",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "KHR": {
+            "code": "KHR",
+            "symbol": "៛",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "KMF": {
+            "code": "KMF",
+            "symbol": "CF",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "KPW": {
+            "code": "KPW",
+            "symbol": "₩",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "KRW": {
+            "code": "KRW",
+            "symbol": "₩",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "KWD": {
+            "code": "KWD",
+            "symbol": "د.ك.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 3
+        },
+        "KYD": {
+            "code": "KYD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "KZT": {
+            "code": "KZT",
+            "symbol": "₸",
+            "thousandsSeparator": " ",
+            "decimalSeparator": "-",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "LAK": {
+            "code": "LAK",
+            "symbol": "₭",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "LBP": {
+            "code": "LBP",
+            "symbol": "ل.ل.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "LKR": {
+            "code": "LKR",
+            "symbol": "₨",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 0
+        },
+        "LRD": {
+            "code": "LRD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "LSL": {
+            "code": "LSL",
+            "symbol": "M",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "LYD": {
+            "code": "LYD",
+            "symbol": "د.ل.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 3
+        },
+        "MAD": {
+            "code": "MAD",
+            "symbol": "د.م.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "MDL": {
+            "code": "MDL",
+            "symbol": "lei",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "MGA": {
+            "code": "MGA",
+            "symbol": "Ar",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "MKD": {
+            "code": "MKD",
+            "symbol": "ден.",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "MMK": {
+            "code": "MMK",
+            "symbol": "K",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MNT": {
+            "code": "MNT",
+            "symbol": "₮",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MOP": {
+            "code": "MOP",
+            "symbol": "MOP$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MRO": {
+            "code": "MRO",
+            "symbol": "UM",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MTL": {
+            "code": "MTL",
+            "symbol": "₤",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MUR": {
+            "code": "MUR",
+            "symbol": "₨",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MVR": {
+            "code": "MVR",
+            "symbol": "MVR",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 1
+        },
+        "MWK": {
+            "code": "MWK",
+            "symbol": "MK",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MXN": {
+            "code": "MXN",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MYR": {
+            "code": "MYR",
+            "symbol": "RM",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "MZN": {
+            "code": "MZN",
+            "symbol": "MT",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "NAD": {
+            "code": "NAD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "NGN": {
+            "code": "NGN",
+            "symbol": "₦",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "NIO": {
+            "code": "NIO",
+            "symbol": "C$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "NOK": {
+            "code": "NOK",
+            "symbol": "kr",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "NPR": {
+            "code": "NPR",
+            "symbol": "₨",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "NZD": {
+            "code": "NZD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "OMR": {
+            "code": "OMR",
+            "symbol": "﷼",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 3
+        },
+        "PAB": {
+            "code": "PAB",
+            "symbol": "B/.",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "PEN": {
+            "code": "PEN",
+            "symbol": "S/.",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "PGK": {
+            "code": "PGK",
+            "symbol": "K",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "PHP": {
+            "code": "PHP",
+            "symbol": "₱",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "PKR": {
+            "code": "PKR",
+            "symbol": "₨",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "PLN": {
+            "code": "PLN",
+            "symbol": "zł",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "PYG": {
+            "code": "PYG",
+            "symbol": "₲",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "QAR": {
+            "code": "QAR",
+            "symbol": "﷼",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "RON": {
+            "code": "RON",
+            "symbol": "L",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "RSD": {
+            "code": "RSD",
+            "symbol": "Дин.",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "RUB": {
+            "code": "RUB",
+            "symbol": "₽",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "RWF": {
+            "code": "RWF",
+            "symbol": "RWF",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "SAR": {
+            "code": "SAR",
+            "symbol": "﷼",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "SBD": {
+            "code": "SBD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SCR": {
+            "code": "SCR",
+            "symbol": "₨",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SDD": {
+            "code": "SDD",
+            "symbol": "LSd",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SDG": {
+            "code": "SDG",
+            "symbol": "£‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SEK": {
+            "code": "SEK",
+            "symbol": "kr",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "SGD": {
+            "code": "SGD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SHP": {
+            "code": "SHP",
+            "symbol": "£",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SLL": {
+            "code": "SLL",
+            "symbol": "Le",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SOS": {
+            "code": "SOS",
+            "symbol": "S",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SRD": {
+            "code": "SRD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "STD": {
+            "code": "STD",
+            "symbol": "Db",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SVC": {
+            "code": "SVC",
+            "symbol": "₡",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "SYP": {
+            "code": "SYP",
+            "symbol": "£",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "SZL": {
+            "code": "SZL",
+            "symbol": "E",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "THB": {
+            "code": "THB",
+            "symbol": "฿",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "TJS": {
+            "code": "TJS",
+            "symbol": "TJS",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ";",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "TMT": {
+            "code": "TMT",
+            "symbol": "m",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "TND": {
+            "code": "TND",
+            "symbol": "د.ت.‏",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 3
+        },
+        "TOP": {
+            "code": "TOP",
+            "symbol": "T$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "TRY": {
+            "code": "TRY",
+            "symbol": "₺",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "TTD": {
+            "code": "TTD",
+            "symbol": "TT$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "TVD": {
+            "code": "TVD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "TWD": {
+            "code": "TWD",
+            "symbol": "NT$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "TZS": {
+            "code": "TZS",
+            "symbol": "TSh",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "UAH": {
+            "code": "UAH",
+            "symbol": "₴",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "UGX": {
+            "code": "UGX",
+            "symbol": "USh",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "USD": {
+            "code": "USD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "UYU": {
+            "code": "UYU",
+            "symbol": "$U",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "UZS": {
+            "code": "UZS",
+            "symbol": "сўм",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "VEB": {
+            "code": "VEB",
+            "symbol": "Bs.",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "VEF": {
+            "code": "VEF",
+            "symbol": "Bs. F.",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "VND": {
+            "code": "VND",
+            "symbol": "₫",
+            "thousandsSeparator": ".",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 0
+        },
+        "VUV": {
+            "code": "VUV",
+            "symbol": "VT",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 0
+        },
+        "WST": {
+            "code": "WST",
+            "symbol": "WS$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "XAF": {
+            "code": "XAF",
+            "symbol": "F",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "XCD": {
+            "code": "XCD",
+            "symbol": "$",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "XBT": {
+            "code": "XBT",
+            "symbol": "Ƀ",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "XOF": {
+            "code": "XOF",
+            "symbol": "F",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "XPF": {
+            "code": "XPF",
+            "symbol": "F",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": false,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "YER": {
+            "code": "YER",
+            "symbol": "﷼",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": true,
+            "decimalDigits": 2
+        },
+        "ZAR": {
+            "code": "ZAR",
+            "symbol": "R",
+            "thousandsSeparator": " ",
+            "decimalSeparator": ",",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "ZMW": {
+            "code": "ZMW",
+            "symbol": "ZK",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        },
+        "WON": {
+            "code": "WON",
+            "symbol": "₩",
+            "thousandsSeparator": ",",
+            "decimalSeparator": ".",
+            "symbolOnLeft": true,
+            "spaceBetweenAmountAndSymbol": false,
+            "decimalDigits": 2
+        }
+    }
+}
